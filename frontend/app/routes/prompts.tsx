@@ -1,6 +1,7 @@
+import React from 'react';
 import { Copy, RefreshCw } from "lucide-react";
 
-export function meta({}: { params: { prompts_path: string } }) {
+export function meta({}: { params: { prompts_path: string }; loader?: any }) {
   return [
     { title: "Prompts | Mafia Arena" },
     { name: "description", content: "View the prompts used to instruct AI players in Mafia Arena games" },
@@ -127,7 +128,8 @@ function ThemeIcon({ theme }: { theme: string }): JSX.Element {
 }
 
 export default function PromptsPage() {
-  const difficulty = 'medium';
+  const [constraint, setConstraint] = React.useState<CONSTRAINT>('moderate');
+  const [difficulty, setDifficulty] = React.useState<'easy' | 'medium' | 'hard'>('medium');
   const dia = DIFFICULTY_SETS[difficulty];
 
   return (
@@ -144,22 +146,42 @@ export default function PromptsPage() {
       <div className="flex items-center gap-2">
         <span className="text-sm text-muted-foreground">Constraint Level:</span>
         <div className="flex items-center gap-1">
-          {(['strict', 'moderate', 'free'] as CONSTRAINT[]).map((constraint) => (
+          {(['strict', 'moderate', 'free'] as CONSTRAINT[]).map((c) => (
             <button
-              key={constraint}
-              onClick={() => copyToClipboard(PERSONA_CONSTRAINT_RULES[constraint])}
+              key={c}
+              onClick={() => setConstraint(c)}
               className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                constraint === 'moderate'
-                  ? 'bg-primary text-primary-foreground'
+                constraint === c
+                  ? 'bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2'
                   : 'bg-muted text-muted-foreground hover:bg-muted-foreground/80'
               }`}
             >
-              {constraint.charAt(0).toUpperCase() + constraint.slice(1)}
+              {c.charAt(0).toUpperCase() + c.slice(1)}
             </button>
           ))}
           <span className="text-xs text-muted-foreground ml-2 flex items-center gap-1">
-            <Copy size={12} /> to copy
+            <Copy size={12} /> click to toggle
           </span>
+        </div>
+      </div>
+
+      {/* Difficulty Selector */}
+      <div className="flex items-center gap-2">
+        <span className="text-sm text-muted-foreground">Preset:</span>
+        <div className="flex items-center gap-1">
+          {(['easy', 'medium', 'hard'] as const).map((d) => (
+            <button
+              key={d}
+              onClick={() => setDifficulty(d)}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                difficulty === d
+                  ? 'bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2'
+                  : 'bg-muted text-muted-foreground hover:bg-muted-foreground/80'
+              }`}
+            >
+              {d.charAt(0).toUpperCase() + d.slice(1)}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -167,6 +189,27 @@ export default function PromptsPage() {
       <div className="text-sm text-muted-foreground">
         Current preset: <span className="font-medium text-foreground">{dia.name}</span> ({dia.players} players: {dia.mafia} Mafia vs {dia.town} Town)
       </div>
+
+      {/* Constraint Rules Display */}
+      <section className="space-y-3">
+        <div className="flex items-center gap-2">
+          <RefreshCw className="w-5 h-5 text-amber-500" />
+          <h2 className="text-lg font-semibold">
+            Constraint Rules ({constraint})
+          </h2>
+        </div>
+        <div className="rounded-lg border bg-card p-4">
+          <pre className="text-xs leading-relaxed whitespace-pre-wrap overflow-x-auto">
+            {PERSONA_CONSTRAINT_RULES[constraint]}
+          </pre>
+          <button
+            onClick={() => copyToClipboard(PERSONA_CONSTRAINT_RULES[constraint])}
+            className="mt-3 text-xs text-primary hover:underline flex items-center gap-1"
+          >
+            <Copy size={12} /> Copy constraint rules to clipboard
+          </button>
+        </div>
+      </section>
 
       {/* System Prompts Section */}
       <section className="space-y-3">
