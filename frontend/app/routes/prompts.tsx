@@ -288,7 +288,7 @@ export default function PromptsPage() {
               MAFIA PERSONA PROMPT (with archetype)
             </span>
             <button
-              onClick={() => copyToClipboard(SYSTEM_PROMPTS.mafia())}
+              onClick={() => copyToClipboard(SYSTEM_PROMPTS.mafia(difficulty === 'easy' ? [] : difficulty === 'medium' ? ['Mafia 2', 'Mafia 3'] : ['Mafia 2', 'Mafia 3', 'Mafia 4']))}
               className="p-1 hover:bg-muted rounded text-muted-foreground hover:text-foreground transition-colors"
               title="Copy to clipboard"
             >
@@ -296,7 +296,7 @@ export default function PromptsPage() {
             </button>
           </div>
           <pre className="p-4 overflow-x-auto text-xs leading-relaxed whitespace-pre-wrap">
-            {SYSTEM_PROMPTS.mafia()}
+            {SYSTEM_PROMPTS.mafia(difficulty === 'easy' ? [] : difficulty === 'medium' ? ['Mafia 2', 'Mafia 3'] : ['Mafia 2', 'Mafia 3', 'Mafia 4'])}
           </pre>
         </div>
 
