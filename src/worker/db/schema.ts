@@ -69,6 +69,7 @@ export const games = sqliteTable('games', {
   configHash: text('config_hash').notNull(),
   playerCount: integer('player_count').notNull(),
   mafiaCount: integer('mafia_count').notNull(),
+  difficulty: text('difficulty').$type<'easy' | 'medium' | 'hard'>().notNull().default('medium'),
   winner: text('winner').$type<'mafia' | 'town'>(),
   rounds: integer('rounds').default(0),
   durationMs: integer('duration_ms').default(0),
@@ -92,6 +93,7 @@ export const games = sqliteTable('games', {
   index('idx_games_persona_theme').on(table.personaTheme),
   index('idx_games_trace_id').on(table.traceId),
   index('idx_games_running_activity').on(table.status, table.discountPricing, table.lastActivity),
+  index('idx_games_difficulty').on(table.difficulty),
 ]);
 
 /**
@@ -273,6 +275,7 @@ export const batches = sqliteTable('batches', {
   configJson: text('config_json', { mode: 'json' }).$type<{
     playerCount: number;
     mafiaCount: number;
+    difficulty: 'easy' | 'medium' | 'hard';
     teams: Array<{ modelId: string; team: 'mafia' | 'town'; count: number }>;
     [key: string]: unknown;
   }>().notNull(),

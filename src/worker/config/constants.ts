@@ -83,13 +83,54 @@ export const PAGINATION = {
 export const GAME = {
   /** Default maximum number of rounds in a game */
   DEFAULT_MAX_ROUNDS: 10,
-  /** Default number of players in a game */
-  DEFAULT_PLAYER_COUNT: 11,
   /** Default number of mafia players */
   DEFAULT_MAFIA_COUNT: 2,
   /** Default context window size for conversation history */
   CONTEXT_WINDOW_SIZE: 3,
 } as const;
+
+/**
+ * Difficulty presets for game configuration.
+ * Each difficulty defines the player-to-mafia ratio.
+ */
+export const DIFFICULTY = {
+  /** Easy: Low mafia presence, better for testing detection capabilities */
+  EASY: {
+    name: 'Easy',
+    description: '1 Mafia, 5 Towns (6 total)',
+    playerCount: 6,
+    mafiaCount: 1,
+    playerIdsPerSide: 1,
+  },
+  /** Medium: Standard mafia ratio (2:9) */
+  MEDIUM: {
+    name: 'Medium',
+    description: '2 Mafia, 9 Towns (11 total)',
+    playerCount: 11,
+    mafiaCount: 2,
+    playerIdsPerSide: 1,
+  },
+  /** Hard: High mafia presence, more complex dynamics */
+  HARD: {
+    name: 'Hard',
+    description: '3 Mafia, 13 Towns (16 total)',
+    playerCount: 16,
+    mafiaCount: 3,
+    playerIdsPerSide: 1,
+  },
+} as const;
+
+/**
+ * Type of difficulty level.
+ */
+export type Difficulty = keyof typeof DIFFICULTY;
+
+/**
+ * Get the default difficulty (Medium).
+ */
+export function getDefaultDifficulty(): Difficulty {
+  return 'medium';
+}
 
 // =============================================================================
 // KV Storage TTL

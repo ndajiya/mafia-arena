@@ -3,7 +3,8 @@ import { Link } from "react-router";
 import { useAuth } from "~/contexts/auth";
 import { getApiUrl } from "~/lib/utils";
 import ProviderModelSelector from "~/components/ui/ProviderModelSelector";
-import { Shuffle, Loader2, KeyRound, AlertCircle, Info, Clock, Server } from "lucide-react";
+import DifficultySelector from "~/components/game/DifficultySelector";
+import { Shuffle, Loader2, KeyRound, AlertCircle, Info, Clock, Server, Ghost, Swords, Crown } from "lucide-react";
 
 export function meta() {
   return [
@@ -28,6 +29,44 @@ interface UserKey {
 const USER_MAX_GAMES = 50;
 const ADMIN_MAX_GAMES = 10000;
 
+interface DifficultyOption {
+  value: 'easy' | 'medium' | 'hard';
+  label: string;
+  description: string;
+  totalPlayers: number;
+  mafiaCount: number;
+  townCount: number;
+}
+
+const DIFFICULTY_OPTIONS: DifficultyOption[] = [
+  {
+    value: 'easy',
+    label: 'Easy',
+    description: '1 Mafia, 5 Towns (6 total)',
+    totalPlayers: 6,
+    mafiaCount: 1,
+    townCount: 5,
+  },
+  {
+    value: 'medium',
+    label: 'Medium',
+    description: '2 Mafia, 9 Towns (11 total)',
+    totalPlayers: 11,
+    mafiaCount: 2,
+    townCount: 9,
+  },
+  {
+    value: 'hard',
+    label: 'Hard',
+    description: '3 Mafia, 13 Towns (16 total)',
+    totalPlayers: 16,
+    mafiaCount: 3,
+    townCount: 13,
+  },
+];
+
+const DEFAULT_DIFFICULTY: DifficultyOption = DIFFICULTY_OPTIONS[1]; // Medium
+
 export default function NewUserBatch() {
   const { authenticated, loading: authLoading, user } = useAuth();
   const isAdmin = user?.isAdmin ?? false;
@@ -35,6 +74,7 @@ export default function NewUserBatch() {
 
   const [name, setName] = useState("");
   const [totalGames, setTotalGames] = useState(10);
+  const [difficulty, setDifficulty] = useState<DifficultyOption>(DEFAULT_DIFFICULTY);
   const [modelA, setModelA] = useState("");
   const [modelB, setModelB] = useState("");
   const [modelAName, setModelAName] = useState("");
@@ -109,12 +149,13 @@ export default function NewUserBatch() {
         credentials: "include",
         body: JSON.stringify({
           totalGames: Math.min(totalGames, maxGames),
+          difficulty: difficulty.value,
           config: {
-            playerCount: 11,
-            mafiaCount: 2,
+            playerCount: difficulty.totalPlayers,
+            mafiaCount: difficulty.mafiaCount,
             teams: [
-              { modelId: "estimate", team: "mafia", count: 2 },
-              { modelId: "estimate", team: "town", count: 9 },
+              { modelId: "estimate", team: "mafia", count: difficulty.mafiaCount },
+              { modelId: "estimate", team: "town", count: difficulty.townCount },
             ],
             discussionEnabled: true,
             contextLevel: "windowed",
@@ -216,12 +257,13 @@ export default function NewUserBatch() {
         body: JSON.stringify({
           name: batchName,
           totalGames: Math.min(totalGames, maxGames),
+          difficulty: difficulty.value,
           config: {
-            playerCount: 11,
-            mafiaCount: 2,
+            playerCount: difficulty.totalPlayers,
+            mafiaCount: difficulty.mafiaCount,
             teams: [
-              { modelId: modelA, team: "mafia", count: 2 },
-              { modelId: modelB, team: "town", count: 9 },
+              { modelId: modelA, team: "mafia", count: difficulty.mafiaCount },
+              { modelId: modelB, team: "town", count: difficulty.townCount },
             ],
             discussionEnabled: true,
             contextLevel: "windowed",
@@ -446,6 +488,8 @@ export default function NewUserBatch() {
             />
           </div>
 
+          <DifficultySelector value={difficulty.value} onChange={setDifficulty} />
+
           {/* Game Count */}
           <div className="space-y-2">
             <label
@@ -472,8 +516,8 @@ export default function NewUserBatch() {
             </h3>
 
             <div className="px-3 py-2 border rounded-md bg-muted/50 text-sm text-muted-foreground">
-              11 players — <span className="text-red-500 font-medium">2 Mafia</span> vs{" "}
-              <span className="text-blue-500 font-medium">9 Town</span>
+              {difficulty.totalPlayers} players — <span className="text-red-500 font-medium">{difficulty.mafiaCount} Mafia</span> vs{" "}
+              <span className="text-blue-500 font-medium">{difficulty.townCount} Town</span>
             </div>
 
             <div className="grid grid-cols-2 gap-6">

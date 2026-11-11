@@ -299,6 +299,7 @@ batches.post('/', async (c, next) => {
   interface CreateBatchRequest {
     name?: string;
     totalGames: number;
+    difficulty?: 'easy' | 'medium' | 'hard';
     config: {
       playerCount: number;
       mafiaCount: number;
@@ -327,7 +328,7 @@ batches.post('/', async (c, next) => {
 
   // Determine limits based on admin status
   const maxGames = isAdmin ? ADMIN_MAX_BATCH_SIZE : USER_MAX_BATCH_SIZE;
-  
+
   // Validate batch size
   if (!body.totalGames || body.totalGames < 1 || body.totalGames > maxGames) {
     throw Errors.BadRequest(`Total games must be between 1 and ${maxGames}`);
@@ -355,13 +356,13 @@ batches.post('/', async (c, next) => {
   } else {
     // User keys (or admin using their own keys)
     const userKeys = await validateUserKeysForModels(userId, body.config.teams, env);
-    
+
     if (userKeys.size === 0) {
       throw Errors.BadRequest(
         'You must add API keys before creating batches. Go to Account → API Keys.'
       );
     }
-    
+
     // Encrypt keys for queue transport
     encryptedUserKeys = await encryptUserKeysForQueue(userKeys, env);
   }
@@ -604,6 +605,7 @@ batches.post('/estimate', async (c) => {
 
   interface EstimateRequest {
     totalGames: number;
+    difficulty?: 'easy' | 'medium' | 'hard';
     config: {
       playerCount: number;
       mafiaCount: number;
@@ -647,7 +649,8 @@ batches.post('/estimate', async (c) => {
   return c.json({
     ...estimate,
     maxGames,
-    note: totalGames < body.totalGames 
+    difficulty: body.difficulty,
+    note: totalGames < body.totalGames
       ? `Capped at limit of ${maxGames} games`
       : undefined,
   });

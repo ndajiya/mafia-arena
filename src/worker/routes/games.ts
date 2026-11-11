@@ -300,6 +300,8 @@ games.post('/run-direct', async (c) => {
     config: {
       playerCount: number;
       mafiaCount: number;
+      townCount?: number;
+      difficulty?: 'easy' | 'medium' | 'hard';
       teams: Array<{
         modelId: string;
         team: 'mafia' | 'town';
@@ -438,16 +440,17 @@ games.post('/run-direct', async (c) => {
   // Create game record in D1 BEFORE starting the workflow.
   // This prevents a race condition where the frontend redirects to the live page
   // before the workflow has created the record, causing "Game not found" errors.
-  const configHash = `${body.config.playerCount}-${body.config.mafiaCount}-${body.config.teams.map(t => `${t.modelId}:${t.count}`).join(',')}`;
+  const configHash = `${body.config.playerCount}-${body.config.mafiaCount}-${body.config.difficulty || 'medium'}-${body.config.teams.map(t => `${t.modelId}:${t.count}`).join(',')}`;
   await env.DB.prepare(`
-    INSERT INTO games (id, status, batch_id, config_hash, player_count, mafia_count, trace_id, persona_theme, discount_pricing, created_at)
-    VALUES (?, 'running', ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO games (id, status, batch_id, config_hash, player_count, mafia_count, difficulty, trace_id, persona_theme, discount_pricing, created_at)
+    VALUES (?, 'running', ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).bind(
     gameId,
     batchId,
     configHash,
     body.config.playerCount,
     body.config.mafiaCount,
+    body.config.difficulty || 'medium',
     traceId,
     personaTheme,
     discountPricing ? 1 : 0,

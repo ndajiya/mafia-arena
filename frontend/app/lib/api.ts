@@ -755,11 +755,10 @@ export interface BatchDetail extends Batch {
   config: {
     name?: string;
     totalGames: number;
-    gameConfig: {
-      playerCount: number;
-      mafiaCount: number;
-      teams: Array<{ modelId: string; team: string; count: number }>;
-    };
+    difficulty: 'easy' | 'medium' | 'hard';
+    playerCount: number;
+    mafiaCount: number;
+    teams: Array<{ modelId: string; team: string; count: number }>;
   };
   recentGames: Array<{
     id: string;
@@ -794,16 +793,16 @@ export interface CostEstimate {
 export async function createBatch(data: {
   name?: string;
   totalGames: number;
-  config: {
-    playerCount: number;
-    mafiaCount: number;
-    teams: Array<{ modelId: string; team: 'mafia' | 'town'; count: number }>;
-    discussionEnabled?: boolean;
-    contextLevel?: 'full' | 'windowed' | 'summary';
-  };
-  useBatchAPI?: boolean;
+  difficulty: 'easy' | 'medium' | 'hard';
+  playerCount: number;
+  mafiaCount: number;
+  teams: Array<{ modelId: string; team: 'mafia' | 'town'; count: number }>;
+  discussionEnabled?: boolean;
+  contextLevel?: 'full' | 'windowed' | 'summary';
+  personaTheme?: 'noir' | 'victorian' | 'modern' | 'fantasy';
+  discountPricing?: boolean;
 }): Promise<{ success: boolean; batchId: string; estimatedCostUsd: number }> {
-  const res = await fetch(`${API_URL}/api/batches`, 
+  const res = await fetch(`${API_URL}/api/batches`,
     getAdminFetchOptions({
       method: 'POST',
       body: JSON.stringify(data),

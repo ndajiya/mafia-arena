@@ -3,9 +3,10 @@
  * These types define the structure of game events, players, and WebSocket messages.
  */
 
-// =============================================================================
-// Game Event Types
-// =============================================================================
+/**
+ * Game difficulty presets that determine player-to-mafia ratio.
+ */
+export type Difficulty = 'easy' | 'medium' | 'hard';
 
 export type PhaseType = 'introduction' | 'night' | 'mafia_chat' | 'day_discussion' | 'day_vote';
 

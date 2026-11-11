@@ -3,7 +3,8 @@ import type { Route } from "./+types/new";
 import { useAuth } from "~/contexts/auth";
 import { getApiUrl } from "~/lib/utils";
 import ProviderModelSelector from "~/components/ui/ProviderModelSelector";
-import { Shield, Key, Shuffle, Loader2, Eye, EyeOff, Check, TrendingUp } from "lucide-react";
+import DifficultySelector from "~/components/game/DifficultySelector";
+import { Shield, Key, Shuffle, Loader2, Eye, EyeOff, Check, TrendingUp, Ghost, Swords, Crown } from "lucide-react";
 import { getEloRatings, type EloRanking } from "~/lib/api";
 
 export function meta({}: Route.MetaArgs) {
@@ -14,6 +15,40 @@ interface UserKey {
   provider: string;
   fingerprint: string;
 }
+
+const DIFFICULTY_OPTIONS: Array<{
+  value: 'easy' | 'medium' | 'hard';
+  label: string;
+  description: string;
+  mafiaCount: number;
+  townCount: number;
+  totalPlayers: number;
+}> = [
+  {
+    value: 'easy',
+    label: 'Easy',
+    description: '1 Mafia, 5 Towns (6 total)',
+    mafiaCount: 1,
+    townCount: 5,
+    totalPlayers: 6,
+  },
+  {
+    value: 'medium',
+    label: 'Medium',
+    description: '2 Mafia, 9 Towns (11 total)',
+    mafiaCount: 2,
+    townCount: 9,
+    totalPlayers: 11,
+  },
+  {
+    value: 'hard',
+    label: 'Hard',
+    description: '3 Mafia, 13 Towns (16 total)',
+    mafiaCount: 3,
+    townCount: 13,
+    totalPlayers: 16,
+  },
+];
 
 const PROVIDER_INFO: Record<string, { name: string; placeholder: string }> = {
   openai: { name: "OpenAI", placeholder: "sk-proj-..." },
@@ -41,6 +76,7 @@ export default function NewGame() {
   const [submitting, setSubmitting] = useState(false);
   const [statusText, setStatusText] = useState("");
   const [pickingRandom, setPickingRandom] = useState(false);
+  const [difficulty, setDifficulty] = useState<DifficultyOption>(DIFFICULTY_OPTIONS[1]); // Default to Medium
   
   // Inline API key entry
   const [apiKeyInputs, setApiKeyInputs] = useState<Record<string, string>>({});
@@ -270,11 +306,12 @@ export default function NewGame() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           config: {
-            playerCount: 11,
-            mafiaCount: 2,
+            playerCount: difficulty.totalPlayers,
+            mafiaCount: difficulty.mafiaCount,
+            townCount: difficulty.townCount,
             teams: [
-              { modelId: modelA, team: "mafia", count: 2 },
-              { modelId: modelB, team: "town", count: 9 },
+              { modelId: modelA, team: "mafia", count: difficulty.mafiaCount },
+              { modelId: modelB, team: "town", count: difficulty.townCount },
             ],
             maxRounds: 10,
             discussionEnabled: true,
@@ -360,10 +397,10 @@ export default function NewGame() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Team setup note */}
+        <DifficultySelector value={difficulty.value} onChange={setDifficulty} />
+
         <div className="text-sm text-muted-foreground">
-          11 players — <span className="text-red-500 font-medium">2 Mafia</span> vs{" "}
-          <span className="text-blue-500 font-medium">9 Town</span>
+          {difficulty.totalPlayers} players — {difficulty.mafiaCount} Mafia vs {difficulty.townCount} Town
         </div>
 
         {/* Model selectors with Elo */}
