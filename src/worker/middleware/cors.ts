@@ -19,8 +19,6 @@ const ALLOWED_ORIGINS = [
   'http://localhost:4322',   // Alternate frontend dev port  
   'http://localhost:8787',   // Worker dev (same-origin)
   'https://mafia-arena.com', // Production frontend
-  'https://www.mafia-arena.com',
-  'https://mafia.reasonable.finance', // Production frontend (reasonable.finance)
 ];
 
 /**
