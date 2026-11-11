@@ -223,10 +223,10 @@ export default function PromptsPage() {
           <div className="flex items-center justify-between px-4 py-2 bg-muted border-b">
             <span className="text-sm font-medium flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-rose-500" />
-              MAFIA SYSTEM PROMPT
+              MAFIA SYSTEM PROMPT ({dia.mafia} Mafia total - teammates shown below)
             </span>
             <button
-              onClick={() => copyToClipboard(SYSTEM_PROMPTS.mafia())}
+              onClick={() => copyToClipboard(SYSTEM_PROMPTS.mafia([difficulty === 'easy' ? [] : difficulty === 'medium' ? ['Mafia 2', 'Mafia 3'] : ['Mafia 2', 'Mafia 3', 'Mafia 4'])))}
               className="p-1 hover:bg-muted rounded text-muted-foreground hover:text-foreground transition-colors"
               title="Copy to clipboard"
             >
@@ -234,7 +234,7 @@ export default function PromptsPage() {
             </button>
           </div>
           <pre className="p-4 overflow-x-auto text-xs leading-relaxed whitespace-pre-wrap">
-            {SYSTEM_PROMPTS.mafia()}
+            {SYSTEM_PROMPTS.mafia(difficulty === 'easy' ? [] : difficulty === 'medium' ? ['Mafia 2', 'Mafia 3'] : ['Mafia 2', 'Mafia 3', 'Mafia 4'])}
           </pre>
         </div>
 
