@@ -49,17 +49,28 @@ app.use('/api/*', rateLimitMiddleware);
 app.get('/', (c) => c.json({ status: 'ok', service: 'mafia-arena' }));
 app.get('/health', (c) => c.json({ status: 'ok', service: 'mafia-arena' }));
 
-// Deep health check - verifies all infrastructure components
+// Deep health check - verifies all infrastructure components with safe binding access
 app.get('/health/deep', async (c) => {
   const startTime = Date.now();
-  
+
+  // Check if bindings exist
+  const hasDB = typeof c.env.DB !== 'undefined';
+  const hasR2 = typeof c.env.TRANSCRIPTS !== 'undefined';
+  const hasKV = typeof c.env.RATE_LIMIT !== 'undefined';
+
+  interface CheckResult {
+    ok: boolean;
+    error?: string;
+    component: string;
+  }
+
   const checks = await Promise.allSettled([
     // D1 Database
-    c.env.DB.prepare('SELECT 1 as ok').first(),
+    hasDB ? c.env.DB.prepare('SELECT 1 as ok').first() : Promise.reject(new Error('DB binding not available')),
     // R2 Storage (head request is cheap)
-    c.env.TRANSCRIPTS.head('health-check'),
+    hasR2 ? c.env.TRANSCRIPTS.head('health-check') : Promise.reject(new Error('R2 binding not available')),
     // KV (get non-existent key is cheap)
-    c.env.RATE_LIMIT.get('health-check'),
+    hasKV ? c.env.RATE_LIMIT.get('health-check') : Promise.reject(new Error('KV binding not available')),
   ]);
 
   const d1Status = checks[0].status === 'fulfilled' ? 'ok' : 'error';
@@ -107,8 +118,9 @@ app.route('/api/blog', blogRoutes);
 app.onError(async (error, c) => {
   console.error('Request error:', error);
 
-  // Log error to D1
-  if (error instanceof Error) {
+  // Log error to D1 - only if DB binding exists
+  const hasDb = typeof c.env.DB !== 'undefined';
+  if (error instanceof Error && hasDb) {
     const url = new URL(c.req.url);
     c.executionCtx.waitUntil(
       logError(c.env.DB, error, {

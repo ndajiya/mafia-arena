@@ -4,9 +4,13 @@ main = "src/worker/index.ts"
 compatibility_date = "2024-12-01"
 compatibility_flags = ["nodejs_compat"]
 
-# Custom Domain Routes - API subdomain
+# Custom Domain Routes - API and main subdomains
 [[routes]]
 pattern = "api.mafia-arena.com"
+custom_domain = true
+
+[[routes]]
+pattern = "mafia.reasonable.finance"
 custom_domain = true
 
 # Enable Smart Placement for cost optimization
