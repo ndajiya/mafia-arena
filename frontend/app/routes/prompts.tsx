@@ -232,10 +232,9 @@ export default function PromptsPage() {
             victorian: { description: "Victorian London - Formal & Precise", colors: "bg-amber-500/10 text-amber-600" },
             modern: { description: "Modern Tech Hub - Casual & Analytical", colors: "bg-emerald-500/10 text-emerald-600" },
             fantasy: { description: "High Fantasy - Mystical & Diverse", colors: "bg-indigo-500/10 text-indigo-600" },
-          }) as [string, { description: string; colors: string }][]
-            .map(([theme, { colors }]) => (
-              <span key={theme} className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium ${colors}`}>"{theme}"</span>
-            ))
+          }).map(([theme, { colors }]) => (
+            <span key={theme} className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium ${colors}`}>"{theme}"</span>
+          ))}
         </div>
 
         {/* Mafia Persona Prompt */}
