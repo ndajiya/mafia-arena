@@ -110,17 +110,13 @@ crons = [
 
 # Environment Variables
 [vars]
-ENVIRONMENT = "production"
+ENVIRONMENT = "development"
 
 # Development environment
 [env.development]
 name = "mafia-arena-dev"
 [env.development.vars]
 ENVIRONMENT = "development"
-
-# Production environment
-[env.production]
-name = "mafia-arena"
 
 # =============================================================================
 # SECRETS (set via `wrangler secret put`)
