@@ -81,7 +81,7 @@ We batch supported requests to cut costs by roughly 40-50%. Games are already as
 ## Prompts & Transparency
 
 ### Can I see the prompts used to instruct the AI players?
-Yes. Check the [Prompts page](`/faq/prompts`) for every system and action prompt.
+Yes. Check the [Prompts page](`/about/prompts`) for every system and action prompt.
 
 
 ### What is "Vote Pattern Analysis"?

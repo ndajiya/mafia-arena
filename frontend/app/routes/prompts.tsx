@@ -224,19 +224,20 @@ export default function PromptsPage() {
         </div>
         <p className="text-sm text-muted-foreground">
           These prompts create player identities BEFORE the game starts, using pre-assigned names and archetypes from themes.
-          <div className="flex flex-wrap gap-1 mt-1">
-            {Object.entries({
-              noir: { description: "1940s Noir - Gritty & Secretive", colors: "bg-slate-500/10 text-slate-600" },
-              victorian: { description: "Victorian London - Formal & Precise", colors: "bg-amber-500/10 text-amber-600" },
-              modern: { description: "Modern Tech Hub - Casual & Analytical", colors: "bg-emerald-500/10 text-emerald-600" },
-              fantasy: { description: "High Fantasy - Mystical & Diverse", colors: "bg-indigo-500/10 text-indigo-600" },
-            }) as [string, { description: string; colors: string }][]
-              .map(([theme, colors]) => (
-                <span key={theme} className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium ${colors}`}>"{theme}"</span>
-              ))
-            }
-          </div>
         </p>
+
+        <div className="flex flex-wrap gap-2">
+          {Object.entries({
+            noir: { description: "1940s Noir - Gritty & Secretive", colors: "bg-slate-500/10 text-slate-600" },
+            victorian: { description: "Victorian London - Formal & Precise", colors: "bg-amber-500/10 text-amber-600" },
+            modern: { description: "Modern Tech Hub - Casual & Analytical", colors: "bg-emerald-500/10 text-emerald-600" },
+            fantasy: { description: "High Fantasy - Mystical & Diverse", colors: "bg-indigo-500/10 text-indigo-600" },
+          }) as [string, { description: string; colors: string }][]
+            .map(([theme, { colors }]) => (
+              <span key={theme} className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium ${colors}`}>"{theme}"</span>
+            ))
+          }
+        </div>
 
         {/* Mafia Persona Prompt */}
         <div className="rounded-lg border bg-card">
