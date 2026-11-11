@@ -226,7 +226,7 @@ export default function PromptsPage() {
               MAFIA SYSTEM PROMPT ({dia.mafia} Mafia total - teammates shown below)
             </span>
             <button
-              onClick={() => copyToClipboard(SYSTEM_PROMPTS.mafia(difficulty === 'easy' ? [] : difficulty === 'medium' ? ['Mafia 2', 'Mafia 3'] : ['Mafia 2', 'Mafia 3', 'Mafia 4'])))}
+              onClick={() => copyToClipboard(SYSTEM_PROMPTS.mafia(difficulty === 'easy' ? [] : difficulty === 'medium' ? ['Mafia 2', 'Mafia 3'] : ['Mafia 2', 'Mafia 3', 'Mafia 4']))}
               className="p-1 hover:bg-muted rounded text-muted-foreground hover:text-foreground transition-colors"
               title="Copy to clipboard"
             >
