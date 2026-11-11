@@ -236,7 +236,6 @@ export default function PromptsPage() {
             .map(([theme, { colors }]) => (
               <span key={theme} className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium ${colors}`}>"{theme}"</span>
             ))
-          }
         </div>
 
         {/* Mafia Persona Prompt */}
